@@ -1,9 +1,9 @@
+from random import choice
 
 import pygame.time
 
-from sounds import *
 from objects import *
-from random import choice
+from sounds import *
 
 pygame.mixer.pre_init()
 pygame.init()
@@ -27,8 +27,6 @@ class Game:
     clock = pygame.time.Clock()
 
     def draw_start_field(self):
-        """ Draws the initial game field.
-        """
         for i in self.x_cell_list:
             for j in self.y_cell_list:
                 cell = Cell()
