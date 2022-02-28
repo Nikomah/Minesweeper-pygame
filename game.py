@@ -27,7 +27,7 @@ class Game:
     clock = pygame.time.Clock()
 
     def draw_start_field(self):
-        """ Отрисовывает начальное игровое поле.
+        """ Draws the initial game field.
         """
         for i in self.x_cell_list:
             for j in self.y_cell_list:
@@ -36,10 +36,10 @@ class Game:
                 self.field.blit(cell.image, cell.rect)
 
     def set_mine_random(self):
-        """ Заполняет игровое поле минами
-                со случайными координатами,
-                исключает попадание двух мин
-                в одну и ту же ячейку.
+        """ Fills the playing field with mines
+            with random coordinates,
+            eliminates the possibility of two mines
+            in the same cell.
         """
         m = 0
         while m < self.mine_number:
@@ -56,7 +56,7 @@ class Game:
             mine.rect.topleft = (x_mine, y_mine)
 
     def chek_of_duplicate_mines(self, x_mine):
-        """ Проверяет дубликаты мин.
+        """ Checks for duplicate mines.
         """
         list_of_occurrences = [i for i in range(len(self.x_mine_list)) if self.x_mine_list[i] == x_mine]
         if x_mine in self.x_mine_list:
@@ -68,8 +68,8 @@ class Game:
 
     @staticmethod
     def check_nearby_mines(mine_list, x, y):
-        """ Проверяет количество мин вокруг данной ячейки
-            и создаёт экземпляр класса Digit.
+        """ Checks the number of mines around the given cell
+            and creates an instance of the Digit class.
         """
         dict_of_nearby_cells = \
             {
@@ -87,9 +87,9 @@ class Game:
             digit.rect.topleft = x, y
 
     def set_nearby_mines(self):
-        """ Создаёт экземпляры класса Digit
-            по всему игровому полю,
-            пропускает ячейки с минами.
+        """ Creates instances of the Digit class
+            all over the playing field,
+            Skips cells with mines.
         """
         mine_list = list(zip(self.x_mine_list, self.y_mine_list))
         for i in self.x_cell_list:
@@ -101,8 +101,8 @@ class Game:
                     self.check_nearby_mines(mine_list, i, j)
 
     def open_none_cell(self, x_pos, y_pos):
-        """ Рекурсивно открывает пустые ячейки и
-            ячейки с ближайшими цифрами.
+        """ Recursively opens empty cells and
+            cells with the closest digits.
         """
         dict_ = \
             {
@@ -132,7 +132,7 @@ class Game:
                 self.open_none_cell(u, v)
 
     def open_digit_cell(self, x_pos, y_pos):
-        """ Открывает ячейку с цифрой.
+        """ Opens the cell with the number.
         """
         for digit in all_digits:
             if digit.rect.collidepoint(x_pos, y_pos):
@@ -140,7 +140,7 @@ class Game:
                 digit.kill()
 
     def draw_flag(self, x, y):
-        """ Рисует флаг.
+        """ Draws the flag.
         """
         for cell in all_cells:
             if cell.rect.collidepoint(x, y):
