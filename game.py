@@ -1,4 +1,3 @@
-
 from random import choice
 
 import pygame.time
@@ -21,6 +20,7 @@ class Game:
         self.field = pygame.display.set_mode((self.field_width, self.field_height + 60))
         self.x_cell_list = [x for x in range(0, self.field_width, 48)]
         self.y_cell_list = [y for y in range(60, self.field_height + 48, 48)]
+
     pygame.display.set_caption('Minesweeper by Pygame')
 
     x_mine_list = []
@@ -28,6 +28,8 @@ class Game:
     clock = pygame.time.Clock()
 
     def draw_start_field(self):
+        """  Draw start field
+        """
         for i in self.x_cell_list:
             for j in self.y_cell_list:
                 cell = Cell()
@@ -73,7 +75,7 @@ class Game:
         dict_of_nearby_cells = \
             {
                 1: ((x - 48), (y - 48)), 2: (x, (y - 48)), 3: ((x + 48), (y - 48)),
-                4: ((x - 48), y),        5: (x, y),        6: ((x + 48), y),
+                4: ((x - 48), y), 5: (x, y), 6: ((x + 48), y),
                 7: ((x - 48), (y + 48)), 8: (x, (y + 48)), 9: ((x + 48), (y + 48))
             }
         number_of_nearby_mines = []
@@ -211,7 +213,7 @@ class Game:
                     quit()
             for mine in all_mines:
                 self.field.blit(mine.image, mine.rect)
-            self.print_text('Game over', self.field_width//2-150, self.field_height//2)
+            self.print_text('Game over', self.field_width // 2 - 150, self.field_height // 2)
             pygame.display.update()
             self.clock.tick(5)
 
