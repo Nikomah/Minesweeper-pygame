@@ -28,8 +28,6 @@ class Game:
     clock = pygame.time.Clock()
 
     def draw_start_field(self):
-        """ Draws the initial game field.
-        """
         for i in self.x_cell_list:
             for j in self.y_cell_list:
                 cell = Cell()
