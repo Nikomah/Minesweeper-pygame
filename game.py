@@ -47,7 +47,7 @@ class Game:
             x_mine = choice(self.x_cell_list)
             y_mine = choice(self.y_cell_list)
             self.y_mine_list.append(y_mine)
-            if self.chek_of_duplicate_mines(x_mine):
+            if self.check_of_duplicate_mines(x_mine):
                 del self.y_mine_list[-1]
                 continue
             else:
@@ -56,7 +56,7 @@ class Game:
             mine = Mine()
             mine.rect.topleft = (x_mine, y_mine)
 
-    def chek_of_duplicate_mines(self, x_mine):
+    def check_of_duplicate_mines(self, x_mine):
         """ Checks for duplicate mines.
         """
         list_of_occurrences = [i for i in range(len(self.x_mine_list)) if self.x_mine_list[i] == x_mine]
@@ -78,13 +78,13 @@ class Game:
                 4: ((x - 48), y), 5: (x, y), 6: ((x + 48), y),
                 7: ((x - 48), (y + 48)), 8: (x, (y + 48)), 9: ((x + 48), (y + 48))
             }
-        number_of_nearby_mines = []
+        number_of_nearby_mines = 0
         for i in dict_of_nearby_cells:
             if dict_of_nearby_cells[i] in mine_list:
-                number_of_nearby_mines.append(dict_of_nearby_cells[i])
-        if len(number_of_nearby_mines) > 0:
+                number_of_nearby_mines += 1
+        if number_of_nearby_mines > 0:
             digit = Digit()
-            digit.image.blit(digit_list[len(number_of_nearby_mines) - 1], (0, 0))
+            digit.image.blit(digit_list[number_of_nearby_mines - 1], (0, 0))
             digit.rect.topleft = x, y
 
     def set_nearby_mines(self):
@@ -221,10 +221,10 @@ class Game:
         time_str_s = str(int(time_s) - int(time_m) * 60)
         time_str_m = str(int(time_m))
         if 0 <= int(time_s) - int(time_m) * 60 < 10:
-            self.print_text(f'Time: {time_str_m}:0{time_str_s}', self.field_width - 200, 15,
+            self.print_text(f'Time: {time_str_m}: 0{time_str_s}', self.field_width - 200, 15,
                             (200, 40, 40), 'fonts/MangabeyRegular-rgqVO.otf', 50)
         else:
-            self.print_text(f'Time: {time_str_m}:{time_str_s}', self.field_width - 200, 15,
+            self.print_text(f'Time: {time_str_m}: {time_str_s}', self.field_width - 200, 15,
                             (200, 40, 40), 'fonts/MangabeyRegular-rgqVO.otf', 50)
 
     def you_win(self):
