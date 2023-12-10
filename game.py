@@ -35,9 +35,10 @@ class Game:
                 cell = Cell()
                 cell.rect.topleft = (i, j)
                 self.field.blit(cell.image, cell.rect)
+                # cell.image.set_alpha(100) # Uncomment to see bombs.
 
     def set_mine_random(self):
-        """ Fills the playing field with mines
+        """ Fills the playing field by mines
             with random coordinates,
             eliminates the possibility of two mines
             in the same cell.
@@ -53,8 +54,9 @@ class Game:
             else:
                 self.x_mine_list.append(x_mine)
                 m += 1
-            mine = Mine()
-            mine.rect.topleft = (x_mine, y_mine)
+                mine = Mine()
+                mine.rect.topleft = (x_mine, y_mine)
+            # self.field.blit(mine.image, mine.rect) # Uncomment to see bombs.
 
     def check_of_duplicate_mines(self, x_mine):
         """ Checks for duplicate mines.
@@ -66,6 +68,7 @@ class Game:
                     return True
         else:
             return False
+        del list_of_occurrences
 
     @staticmethod
     def check_nearby_mines(mine_list, x, y):
@@ -100,6 +103,7 @@ class Game:
                     continue
                 else:
                     self.check_nearby_mines(mine_list, i, j)
+        del mine_list
 
     def open_none_cell(self, x_pos, y_pos):
         """ Recursively opens empty cells and
@@ -117,11 +121,13 @@ class Game:
                 if cell.rect.collidepoint(i, j):
                     self.field.blit(none, cell.rect)
                     none_list.append(cell.rect.topleft)
+                    cell.kill()
             for digit in all_digits:
                 if digit.rect.collidepoint(i, j):
                     self.field.blit(digit.image, digit.rect)
+                    digit.kill()
         unique_none_list = list(set(none_list))
-        none_list.clear()
+        del none_list
         for cell in none_cell:
             if cell.rect.collidepoint(x_pos, y_pos) and cell.rect.topleft in unique_none_list:
                 unique_none_list.remove(cell.rect.topleft)
@@ -131,6 +137,7 @@ class Game:
             for i in unique_none_list:
                 u, v = i
                 self.open_none_cell(u, v)
+        del unique_none_list
 
     def open_digit_cell(self, x_pos, y_pos):
         """ Opens the cell with the number.
@@ -170,7 +177,7 @@ class Game:
             self.print_text(f': {count}', 100, 15, (200, 40, 40),
                             font_type='fonts/MangabeyRegular-rgqVO.otf', font_size=50)
             self.display_time(time_s, time_m)
-            if len(all_mines.sprites()) == 0:
+            if count == 0:
                 end = True
                 pygame.mixer.Sound.play(win_sound)
                 self.you_win()
@@ -186,6 +193,7 @@ class Game:
                         self.draw_flag(x, y)
 
                     elif event.button == 1:
+
                         for mine in all_mines:
                             if mine.rect.collidepoint(x, y):
                                 end = True
@@ -197,10 +205,12 @@ class Game:
                         for cell in none_cell:
                             if cell.rect.collidepoint(x, y):
                                 self.open_none_cell(x, y)
+
             time_millis = self.clock.tick(15)
             if not end:
                 time_s += time_millis / 1000
                 time_m += time_millis / 60000
+
             pygame.display.flip()
             pygame.display.update()
 
@@ -213,9 +223,35 @@ class Game:
                     quit()
             for mine in all_mines:
                 self.field.blit(mine.image, mine.rect)
+                mine.kill()
             self.print_text('Game over', self.field_width // 2 - 150, self.field_height // 2)
             pygame.display.update()
             self.clock.tick(5)
+            self.restart()
+
+    def restart(self):
+        pygame.draw.rect(screen, (0, 0, 200), pygame.Rect(self.field_width // 2 - 90,
+                                                          self.field_height // 2 + 100, 150, 70))
+        self.print_text('menu', self.field_width // 2 - 75, self.field_height // 2 + 105, font_size=60)
+        pygame.display.flip()
+        all_cells.empty()
+        all_digits.empty()
+        none_cell.empty()
+        self.y_mine_list.clear()
+        self.x_mine_list.clear()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                x, y = event.pos
+                if event.button == 1:
+                    if self.field_width // 2 - 90 < x < self.field_width // 2 + 60 \
+                            and self.field_height // 2 + 100 < y < self.field_height // 2 + 170:
+                        self.field = pygame.display.set_mode((432, 144 * 4))
+                        from main import run_main
+                        run_main()
 
     def display_time(self, time_s, time_m):
         time_str_s = str(int(time_s) - int(time_m) * 60)
@@ -237,6 +273,7 @@ class Game:
             self.print_text('You win!', self.field_width // 2 - 120, self.field_height // 2 - 100)
             pygame.display.update()
             self.clock.tick(5)
+            self.restart()
 
     def print_text(self, message, x, y, font_color=(220, 90, 87), font_type='fonts/FrostbiteBossFight-dL0Z.ttf',
                    font_size=80):
