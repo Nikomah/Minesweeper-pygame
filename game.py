@@ -25,7 +25,6 @@ class Game:
 
     x_mine_list = []
     y_mine_list = []
-    clock = pygame.time.Clock()
 
     def draw_start_field(self):
         """  Draw start field
@@ -161,6 +160,8 @@ class Game:
     def run_game(self):
         time_m = 0
         time_s = 0
+        time_millis = False
+        clock = None
         game = True
         end = False
         self.set_mine_random()
@@ -193,7 +194,6 @@ class Game:
                         self.draw_flag(x, y)
 
                     elif event.button == 1:
-
                         for mine in all_mines:
                             if mine.rect.collidepoint(x, y):
                                 end = True
@@ -205,9 +205,11 @@ class Game:
                         for cell in none_cell:
                             if cell.rect.collidepoint(x, y):
                                 self.open_none_cell(x, y)
+                        clock = pygame.time.Clock()
+                        time_millis = clock.tick(15)
 
-            time_millis = self.clock.tick(15)
-            if not end:
+            if not end and time_millis:
+                time_millis = clock.tick(15)
                 time_s += time_millis / 1000
                 time_m += time_millis / 60000
 
@@ -226,7 +228,6 @@ class Game:
                 mine.kill()
             self.print_text('Game over', self.field_width // 2 - 150, self.field_height // 2)
             pygame.display.update()
-            self.clock.tick(5)
             self.restart()
 
     def restart(self):
@@ -272,7 +273,6 @@ class Game:
                     quit()
             self.print_text('You win!', self.field_width // 2 - 120, self.field_height // 2 - 100)
             pygame.display.update()
-            self.clock.tick(5)
             self.restart()
 
     def print_text(self, message, x, y, font_color=(220, 90, 87), font_type='fonts/FrostbiteBossFight-dL0Z.ttf',

@@ -11,6 +11,11 @@ class Menu(pygame.sprite.Sprite):
         self.image = pygame.Surface((432, 144))
         self.rect = self.image.get_rect()
 
+    def draw(self, color: tuple, topleft_x: int, topleft_y: int):
+        self.image.fill(color)
+        self.rect.topleft = (topleft_x, topleft_y)
+        screen.blit(self.image, self.rect)
+
 
 def print_text(message, x, y, font_color=(0, 0, 0), font_type='fonts/MangabeyRegular-rgqVO.otf', font_size=50):
     font_type = pygame.font.Font(font_type, font_size)
@@ -20,19 +25,13 @@ def print_text(message, x, y, font_color=(0, 0, 0), font_type='fonts/MangabeyReg
 
 def run_main():
     easy = Menu()
-    easy.image.fill((128, 255, 0))
-    easy.rect.topleft = 0, 144
-    screen.blit(easy.image, easy.rect)
+    easy.draw((128, 255, 0), 0, 144)
 
     middle = Menu()
-    middle.image.fill((255, 178, 102))
-    middle.rect.topleft = 0, 288
-    screen.blit(middle.image, middle.rect)
+    middle.draw((255, 178, 102), 0, 288)
 
     strong = Menu()
-    strong.image.fill((255, 102, 102))
-    strong.rect.topleft = 0, 432
-    screen.blit(strong.image, strong.rect)
+    strong.draw((255, 102, 102), 0, 432)
 
     print_text('choose field:', 110, 50, font_color=(220, 90, 87))
     print_text('9 x 9', 160, 194)
