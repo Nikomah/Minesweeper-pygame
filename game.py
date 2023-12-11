@@ -206,7 +206,7 @@ class Game:
                             if cell.rect.collidepoint(x, y):
                                 self.open_none_cell(x, y)
                         clock = pygame.time.Clock()
-                        time_millis = clock.tick(15)
+                        time_millis = True
 
             if not end and time_millis:
                 time_millis = clock.tick(15)
