@@ -7,7 +7,7 @@ cell_image = pygame.image.load('images/cell.png').convert_alpha()
 mine_image = pygame.image.load('images/mine.png').convert_alpha()
 icon = pygame.image.load('images/icon.png').convert_alpha()
 bomb = pygame.image.load('images/pngwing.com.png')
-flag = pygame.image.load('images/flag.png').convert_alpha()
+flag_image = pygame.image.load('images/flag.png').convert_alpha()
 none = pygame.image.load('images/none.png')
 digit_list = [
               pygame.image.load('images/1.png').convert_alpha(), pygame.image.load('images/2.png').convert_alpha(),

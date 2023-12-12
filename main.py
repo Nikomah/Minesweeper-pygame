@@ -2,9 +2,6 @@
 from game import *
 
 
-clock = pygame.time.Clock()
-
-
 class Menu(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -55,7 +52,6 @@ def run_main():
                     strong_game = Game(30, 16, mine_number=99)
                     strong_game.run_game()
         pygame.display.flip()
-        clock.tick(30)
         pygame.display.update()
     quit()
 

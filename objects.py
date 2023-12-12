@@ -5,6 +5,7 @@ all_cells = pygame.sprite.Group()
 all_mines = pygame.sprite.Group()
 all_digits = pygame.sprite.Group()
 none_cell = pygame.sprite.Group()
+all_flags = pygame.sprite.Group()
 
 
 class Cell(pygame.sprite.Sprite):
@@ -31,3 +32,12 @@ class Digit(pygame.sprite.Sprite):
         self.image = pygame.Surface((48, 48))
         self.rect = self.image.get_rect()
         self.add(all_digits)
+
+
+class Flag(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = flag_image
+        self.rect = self.image.get_rect()
+        self.image.blit(flag_image, (0, 0))
+        self.add(all_flags)

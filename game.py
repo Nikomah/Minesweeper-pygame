@@ -1,3 +1,4 @@
+import shelve
 from random import choice
 
 import pygame.time
@@ -25,6 +26,13 @@ class Game:
 
     x_mine_list = []
     y_mine_list = []
+
+    time_m = 0
+    time_s = 0
+
+    count = None
+
+    file_name = ''
 
     def draw_start_field(self):
         """  Draw start field
@@ -149,17 +157,18 @@ class Game:
     def draw_flag(self, x, y):
         """ Draws the flag.
         """
+        flag = Flag()
         for cell in all_cells:
             if cell.rect.collidepoint(x, y):
+                flag.rect.topleft = cell.rect.topleft
                 self.field.blit(none, cell.rect)
-                self.field.blit(flag, cell.rect.topleft)
+                self.field.blit(flag.image, cell.rect.topleft)
                 if pygame.sprite.spritecollideany(cell, all_mines):
                     pygame.sprite.spritecollideany(cell, all_mines).kill()
-                    cell.kill()
+                cell.kill()
+                self.count -= 1
 
     def run_game(self):
-        time_m = 0
-        time_s = 0
         time_millis = False
         clock = None
         game = True
@@ -167,7 +176,8 @@ class Game:
         self.set_mine_random()
         self.set_nearby_mines()
         self.draw_start_field()
-        count = len(all_mines.sprites())
+        self.count = len(all_mines.sprites())
+        fake_count = self.mine_number
         for cell in all_cells:
             if not pygame.sprite.spritecollideany(cell, all_digits):
                 if not pygame.sprite.spritecollideany(cell, all_mines):
@@ -175,10 +185,10 @@ class Game:
         while game:
             pygame.draw.rect(self.field, (44, 41, 40), (0, 0, self.field_width, 60))
             self.field.blit(bomb, (30, 8))
-            self.print_text(f': {count}', 100, 15, (200, 40, 40),
+            self.print_text(f': {fake_count}', 100, 15, (200, 40, 40),
                             font_type='fonts/MangabeyRegular-rgqVO.otf', font_size=50)
-            self.display_time(time_s, time_m)
-            if count == 0:
+            self.display_time(self.time_s, self.time_m)
+            if self.count == 0:
                 end = True
                 pygame.mixer.Sound.play(win_sound)
                 self.you_win()
@@ -190,8 +200,18 @@ class Game:
                     x, y = event.pos
 
                     if event.button == 3:
-                        count -= 1
-                        self.draw_flag(x, y)
+                        flag = Flag()
+                        for flag in all_flags:
+                            if flag.rect.collidepoint(x, y):
+                                cell = Cell()
+                                cell.rect.topleft = flag.rect.topleft
+                                self.field.blit(cell.image, cell.rect)
+                                cell.kill()
+                            else:
+                                self.draw_flag(x, y)
+                        flag.kill()
+                        if fake_count != 0:
+                            fake_count -= 1
 
                     elif event.button == 1:
                         for mine in all_mines:
@@ -210,8 +230,8 @@ class Game:
 
             if not end and time_millis:
                 time_millis = clock.tick(15)
-                time_s += time_millis / 1000
-                time_m += time_millis / 60000
+                self.time_s += time_millis / 1000
+                self.time_m += time_millis / 60000
 
             pygame.display.flip()
             pygame.display.update()
@@ -266,6 +286,13 @@ class Game:
 
     def you_win(self):
         stopped = True
+        if self.mine_number == 10:
+            self.file_name = 'easy_best_time'
+        elif self.mine_number == 40:
+            self.file_name = 'middle_best_time'
+        else:
+            self.file_name = 'strong_best_time'
+        self.check_count_best(self.file_name, self.time_s)
         while stopped:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -280,3 +307,16 @@ class Game:
         font_type = pygame.font.Font(font_type, font_size)
         text = font_type.render(message, True, font_color)
         self.field.blit(text, (x, y))
+
+    @staticmethod
+    def check_count_best(file_name, time_s):
+        with shelve.open(file_name) as file:
+            if 'best_time' in file:
+                if file['best_time'] > time_s:
+                    file['best_time'] = int(time_s)
+                    print('Best result!')
+            else:
+                file['best_time'] = 10000000
+            print(file['best_time'])
+            file.sync()
+            file.close()
