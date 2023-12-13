@@ -134,6 +134,9 @@ class Game:
                 if digit.rect.collidepoint(i, j):
                     self.field.blit(digit.image, digit.rect)
                     digit.kill()
+            for cell in all_cells:
+                if cell.rect.collidepoint(i, j):
+                    cell.kill()
         unique_none_list = list(set(none_list))
         del none_list
         for cell in none_cell:
