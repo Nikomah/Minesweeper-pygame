@@ -31,6 +31,7 @@ class Game:
     time_s = 0
 
     count = None
+    fake_count = None
 
     file_name = ''
 
@@ -160,13 +161,15 @@ class Game:
         flag = Flag()
         for cell in all_cells:
             if cell.rect.collidepoint(x, y):
+                if self.fake_count != 0:
+                    self.fake_count -= 1
                 flag.rect.topleft = cell.rect.topleft
                 self.field.blit(none, cell.rect)
                 self.field.blit(flag.image, cell.rect.topleft)
                 if pygame.sprite.spritecollideany(cell, all_mines):
                     pygame.sprite.spritecollideany(cell, all_mines).kill()
-                cell.kill()
-                self.count -= 1
+                    self.count -= 1
+                break
 
     def run_game(self):
         time_millis = False
@@ -177,7 +180,7 @@ class Game:
         self.set_nearby_mines()
         self.draw_start_field()
         self.count = len(all_mines.sprites())
-        fake_count = self.mine_number
+        self.fake_count = self.mine_number
         for cell in all_cells:
             if not pygame.sprite.spritecollideany(cell, all_digits):
                 if not pygame.sprite.spritecollideany(cell, all_mines):
@@ -185,7 +188,7 @@ class Game:
         while game:
             pygame.draw.rect(self.field, (44, 41, 40), (0, 0, self.field_width, 60))
             self.field.blit(bomb, (30, 8))
-            self.print_text(f': {fake_count}', 100, 15, (200, 40, 40),
+            self.print_text(f': {self.fake_count}', 100, 15, (200, 40, 40),
                             font_type='fonts/MangabeyRegular-rgqVO.otf', font_size=50)
             self.display_time(self.time_s, self.time_m)
             if self.count == 0:
@@ -200,18 +203,16 @@ class Game:
                     x, y = event.pos
 
                     if event.button == 3:
-                        flag = Flag()
+                        self.draw_flag(x, y)
+
+                    elif event.button == 2:
                         for flag in all_flags:
                             if flag.rect.collidepoint(x, y):
                                 cell = Cell()
                                 cell.rect.topleft = flag.rect.topleft
                                 self.field.blit(cell.image, cell.rect)
-                                cell.kill()
-                            else:
-                                self.draw_flag(x, y)
-                        flag.kill()
-                        if fake_count != 0:
-                            fake_count -= 1
+                                flag.kill()
+                                self.fake_count += 1
 
                     elif event.button == 1:
                         for mine in all_mines:
@@ -257,6 +258,7 @@ class Game:
         pygame.display.flip()
         all_cells.empty()
         all_digits.empty()
+        all_flags.empty()
         none_cell.empty()
         self.y_mine_list.clear()
         self.x_mine_list.clear()
