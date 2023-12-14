@@ -158,6 +158,11 @@ class Game:
             if digit.rect.collidepoint(x_pos, y_pos):
                 self.field.blit(digit.image, digit.rect)
                 digit.kill()
+                break
+        for cell in all_cells:
+            if cell.rect.collidepoint(x_pos, y_pos):
+                cell.kill()
+                break
 
     def draw_flag(self, x, y):
         """ Draws the flag.
@@ -222,6 +227,7 @@ class Game:
                                         self.list_of_deleted_mines_topleft.index(flag.rect.topleft)]
                                 flag.kill()
                                 self.fake_count += 1
+                                break
 
                     elif event.button == 1:
                         for mine in all_mines:
