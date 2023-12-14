@@ -151,14 +151,11 @@ class Game:
                 self.open_none_cell(u, v)
         del unique_none_list
 
-    def open_digit_cell(self, x_pos, y_pos):
+    def open_digit_cell(self, x_pos, y_pos, digit):
         """ Opens the cell with the number.
         """
-        for digit in all_digits:
-            if digit.rect.collidepoint(x_pos, y_pos):
-                self.field.blit(digit.image, digit.rect)
-                digit.kill()
-                break
+        self.field.blit(digit.image, digit.rect)
+        digit.kill()
         for cell in all_cells:
             if cell.rect.collidepoint(x_pos, y_pos):
                 cell.kill()
@@ -235,12 +232,15 @@ class Game:
                                 end = True
                                 pygame.mixer.Sound.play(boom_sound)
                                 self.game_over()
+                                break
                         for digit in all_digits:
                             if digit.rect.collidepoint(x, y):
-                                self.open_digit_cell(x, y)
+                                self.open_digit_cell(x, y, digit)
+                                break
                         for cell in none_cell:
                             if cell.rect.collidepoint(x, y):
                                 self.open_none_cell(x, y)
+                                break
                         clock = pygame.time.Clock()
                         time_millis = True
 
