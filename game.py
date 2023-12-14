@@ -26,6 +26,7 @@ class Game:
 
     x_mine_list = []
     y_mine_list = []
+    list_of_deleted_mines_topleft = []
 
     time_m = 0
     time_s = 0
@@ -171,6 +172,7 @@ class Game:
                 self.field.blit(flag.image, cell.rect.topleft)
                 if pygame.sprite.spritecollideany(cell, all_mines):
                     pygame.sprite.spritecollideany(cell, all_mines).kill()
+                    self.list_of_deleted_mines_topleft.append(cell.rect.topleft)
                     self.count -= 1
                 break
 
@@ -214,6 +216,10 @@ class Game:
                                 cell = Cell()
                                 cell.rect.topleft = flag.rect.topleft
                                 self.field.blit(cell.image, cell.rect)
+                                if flag.rect.topleft in self.list_of_deleted_mines_topleft:
+                                    mine = Mine()
+                                    mine.rect.topleft = self.list_of_deleted_mines_topleft[
+                                        self.list_of_deleted_mines_topleft.index(flag.rect.topleft)]
                                 flag.kill()
                                 self.fake_count += 1
 
@@ -265,6 +271,7 @@ class Game:
         none_cell.empty()
         self.y_mine_list.clear()
         self.x_mine_list.clear()
+        self.list_of_deleted_mines_topleft.clear()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
