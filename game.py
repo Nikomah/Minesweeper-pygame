@@ -31,7 +31,6 @@ class Game:
     time_m = 0
     time_s = 0
 
-    count = None
     fake_count = None
 
     file_name = ''
@@ -163,19 +162,19 @@ class Game:
 
     def draw_flag(self, x, y):
         """ Draws the flag.
+            You cannot set a flag on an empty cell, digit, or other flag.
         """
         flag = Flag()
         for cell in all_cells:
             if cell.rect.collidepoint(x, y):
-                if self.fake_count != 0:
-                    self.fake_count -= 1
+                self.fake_count -= 1
                 flag.rect.topleft = cell.rect.topleft
                 self.field.blit(none, cell.rect)
                 self.field.blit(flag.image, cell.rect.topleft)
+                cell.kill()
                 if pygame.sprite.spritecollideany(cell, all_mines):
                     pygame.sprite.spritecollideany(cell, all_mines).kill()
                     self.list_of_deleted_mines_topleft.append(cell.rect.topleft)
-                    self.count -= 1
                 break
 
     def run_game(self):
@@ -186,7 +185,6 @@ class Game:
         self.set_mine_random()
         self.set_nearby_mines()
         self.draw_start_field()
-        self.count = len(all_mines.sprites())
         self.fake_count = self.mine_number
         for cell in all_cells:
             if not pygame.sprite.spritecollideany(cell, all_digits):
@@ -198,7 +196,7 @@ class Game:
             self.print_text(f': {self.fake_count}', 100, 15, (200, 40, 40),
                             font_type='fonts/MangabeyRegular-rgqVO.otf', font_size=50)
             self.display_time(self.time_s, self.time_m)
-            if self.count == 0:
+            if len(all_mines) == 0 and len(all_flags) == self.mine_number:
                 end = True
                 pygame.mixer.Sound.play(win_sound)
                 self.you_win()
@@ -220,8 +218,10 @@ class Game:
                                 self.field.blit(cell.image, cell.rect)
                                 if flag.rect.topleft in self.list_of_deleted_mines_topleft:
                                     mine = Mine()
-                                    mine.rect.topleft = self.list_of_deleted_mines_topleft[
-                                        self.list_of_deleted_mines_topleft.index(flag.rect.topleft)]
+                                    coord = self.list_of_deleted_mines_topleft.index(flag.rect.topleft)
+                                    mine.rect.topleft = self.list_of_deleted_mines_topleft[coord]
+                                    self.list_of_deleted_mines_topleft.pop(coord)
+                                    print(len(all_mines))
                                 flag.kill()
                                 self.fake_count += 1
                                 break
