@@ -244,7 +244,7 @@ class Game:
                                 self.open_none_cell(x, y)
                                 break
                         clock = pygame.time.Clock()
-                        time_millis = True
+                        time_millis = clock.tick(15)
 
             if not end and time_millis:
                 time_millis = clock.tick(15)
