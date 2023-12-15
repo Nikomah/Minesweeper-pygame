@@ -42,8 +42,8 @@ class Game:
             for j in self.y_cell_list:
                 cell = Cell()
                 cell.rect.topleft = (i, j)
+                # cell.image.set_alpha(100)  # Uncomment to see bombs.
                 self.field.blit(cell.image, cell.rect)
-                # cell.image.set_alpha(100) # Uncomment to see bombs.
 
     def set_mine_random(self):
         """ Fills the playing field by mines
@@ -64,7 +64,7 @@ class Game:
                 m += 1
                 mine = Mine()
                 mine.rect.topleft = (x_mine, y_mine)
-            # self.field.blit(mine.image, mine.rect) # Uncomment to see bombs.
+            # self.field.blit(mine.image, mine.rect)  # Uncomment to see bombs.
 
     def check_of_duplicate_mines(self, x_mine):
         """ Checks for duplicate mines.
@@ -189,7 +189,8 @@ class Game:
         for cell in all_cells:
             if not pygame.sprite.spritecollideany(cell, all_digits):
                 if not pygame.sprite.spritecollideany(cell, all_mines):
-                    cell.add(none_cell)
+                    nonecell = NoneCell()
+                    nonecell.rect.topleft = cell.rect.topleft
         while game:
             pygame.draw.rect(self.field, (44, 41, 40), (0, 0, self.field_width, 60))
             self.field.blit(bomb, (30, 8))
@@ -216,6 +217,7 @@ class Game:
                                 cell = Cell()
                                 cell.rect.topleft = flag.rect.topleft
                                 self.field.blit(cell.image, cell.rect)
+                                print(len(none_cell))
                                 if flag.rect.topleft in self.list_of_deleted_mines_topleft:
                                     mine = Mine()
                                     coord = self.list_of_deleted_mines_topleft.index(flag.rect.topleft)

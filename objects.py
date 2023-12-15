@@ -41,3 +41,12 @@ class Flag(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.image.blit(flag_image, (0, 0))
         self.add(all_flags)
+
+
+class NoneCell(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = none
+        self.rect = self.image.get_rect()
+        self.image.blit(none, (0, 0))
+        self.add(none_cell)
