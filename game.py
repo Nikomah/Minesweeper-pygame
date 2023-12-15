@@ -113,7 +113,7 @@ class Game:
                     self.check_nearby_mines(mine_list, i, j)
         del mine_list
 
-    def open_none_cell(self, x_pos, y_pos):
+    def open_empty_cell(self, x_pos, y_pos):
         """ Recursively opens empty cells and
             cells with the closest digits.
         """
@@ -123,12 +123,12 @@ class Game:
                 4: ((x_pos - 48), y_pos), 5: (x_pos, y_pos), 6: ((x_pos + 48), y_pos),
                 7: ((x_pos - 48), (y_pos + 48)), 8: (x_pos, (y_pos + 48)), 9: ((x_pos + 48), (y_pos + 48))
             }
-        none_list = []
+        empty_list = []
         for i, j in dict_.values():
-            for cell in none_cell:
+            for cell in empty_cell:
                 if cell.rect.collidepoint(i, j):
-                    self.field.blit(none, cell.rect)
-                    none_list.append(cell.rect.topleft)
+                    self.field.blit(empty, cell.rect)
+                    empty_list.append(cell.rect.topleft)
                     cell.kill()
             for digit in all_digits:
                 if digit.rect.collidepoint(i, j):
@@ -137,18 +137,18 @@ class Game:
             for cell in all_cells:
                 if cell.rect.collidepoint(i, j):
                     cell.kill()
-        unique_none_list = list(set(none_list))
-        del none_list
-        for cell in none_cell:
-            if cell.rect.collidepoint(x_pos, y_pos) and cell.rect.topleft in unique_none_list:
-                unique_none_list.remove(cell.rect.topleft)
+        unique_empty_list = list(set(empty_list))
+        del empty_list
+        for cell in empty_cell:
+            if cell.rect.collidepoint(x_pos, y_pos) and cell.rect.topleft in unique_empty_list:
+                unique_empty_list.remove(cell.rect.topleft)
                 cell.kill()
-        if len(unique_none_list) != 0:
+        if len(unique_empty_list) != 0:
             pygame.mixer.Sound.play(cell_sound)
-            for i in unique_none_list:
+            for i in unique_empty_list:
                 u, v = i
-                self.open_none_cell(u, v)
-        del unique_none_list
+                self.open_empty_cell(u, v)
+        del unique_empty_list
 
     def open_digit_cell(self, x_pos, y_pos, digit):
         """ Opens the cell with the number.
@@ -169,7 +169,7 @@ class Game:
             if cell.rect.collidepoint(x, y):
                 self.fake_count -= 1
                 flag.rect.topleft = cell.rect.topleft
-                self.field.blit(none, cell.rect)
+                self.field.blit(empty, cell.rect)
                 self.field.blit(flag.image, cell.rect.topleft)
                 cell.kill()
                 if pygame.sprite.spritecollideany(cell, all_mines):
@@ -189,8 +189,8 @@ class Game:
         for cell in all_cells:
             if not pygame.sprite.spritecollideany(cell, all_digits):
                 if not pygame.sprite.spritecollideany(cell, all_mines):
-                    nonecell = NoneCell()
-                    nonecell.rect.topleft = cell.rect.topleft
+                    emptycell = EmptyCell()
+                    emptycell.rect.topleft = cell.rect.topleft
         while game:
             pygame.draw.rect(self.field, (44, 41, 40), (0, 0, self.field_width, 60))
             self.field.blit(bomb, (30, 8))
@@ -217,7 +217,7 @@ class Game:
                                 cell = Cell()
                                 cell.rect.topleft = flag.rect.topleft
                                 self.field.blit(cell.image, cell.rect)
-                                print(len(none_cell))
+                                print(len(empty_cell))
                                 if flag.rect.topleft in self.list_of_deleted_mines_topleft:
                                     mine = Mine()
                                     coord = self.list_of_deleted_mines_topleft.index(flag.rect.topleft)
@@ -239,9 +239,9 @@ class Game:
                             if digit.rect.collidepoint(x, y):
                                 self.open_digit_cell(x, y, digit)
                                 break
-                        for cell in none_cell:
+                        for cell in empty_cell:
                             if cell.rect.collidepoint(x, y):
-                                self.open_none_cell(x, y)
+                                self.open_empty_cell(x, y)
                                 break
                         clock = pygame.time.Clock()
                         time_millis = clock.tick(15)
@@ -276,7 +276,7 @@ class Game:
         all_cells.empty()
         all_digits.empty()
         all_flags.empty()
-        none_cell.empty()
+        empty_cell.empty()
         self.y_mine_list.clear()
         self.x_mine_list.clear()
         self.list_of_deleted_mines_topleft.clear()
