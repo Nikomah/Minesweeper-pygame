@@ -12,10 +12,12 @@ pygame.font.init()
 
 
 class Game:
-    def __init__(self, w, h, mine_number):
+    def __init__(self, w, h, mine_number, name=None):
         self.w = w
         self.h = h
         self.mine_number = mine_number
+        self.user_name = name
+        print(self.user_name)
         self.field_width = self.w * 48
         self.field_height = self.h * 48
         self.field = pygame.display.set_mode((self.field_width, self.field_height + 60))
@@ -24,9 +26,10 @@ class Game:
 
     pygame.display.set_caption('Minesweeper by Pygame')
 
-    x_mine_list = []
-    y_mine_list = []
-    list_of_deleted_mines_topleft = []
+    x_mine_list = list()
+    y_mine_list = list()
+    list_of_deleted_mines_topleft = list()
+    user_list_time = list()
 
     time_m = 0
     time_s = 0
@@ -217,7 +220,6 @@ class Game:
                                 cell = Cell()
                                 cell.rect.topleft = flag.rect.topleft
                                 self.field.blit(cell.image, cell.rect)
-                                print(len(empty_cell))
                                 if flag.rect.topleft in self.list_of_deleted_mines_topleft:
                                     mine = Mine()
                                     coord = self.list_of_deleted_mines_topleft.index(flag.rect.topleft)
@@ -292,7 +294,7 @@ class Game:
                             and self.field_height // 2 + 100 < y < self.field_height // 2 + 170:
                         self.field = pygame.display.set_mode((432, 144 * 4))
                         from main import run_main
-                        run_main()
+                        run_main(name=self.user_name)
 
     def display_time(self, time_s, time_m):
         time_str_s = str(int(time_s) - int(time_m) * 60)
@@ -312,7 +314,10 @@ class Game:
             self.file_name = 'middle_best_time'
         else:
             self.file_name = 'strong_best_time'
-        self.check_count_best(self.file_name, self.time_s)
+        if self.user_name:
+            self.wright_count_best(self.file_name, self.time_s)
+            import count_tkinter
+            count_tkinter.final_widow(self.file_name, self.time_s)
         while stopped:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -328,15 +333,16 @@ class Game:
         text = font_type.render(message, True, font_color)
         self.field.blit(text, (x, y))
 
-    @staticmethod
-    def check_count_best(file_name, time_s):
+    def wright_count_best(self, file_name: str, time_s):
         with shelve.open(file_name) as file:
-            if 'best_time' in file:
-                if file['best_time'] > time_s:
-                    file['best_time'] = int(time_s)
-                    print('Best result!')
+
+            if self.user_name not in file:
+                self.user_list_time = [time_s, ]
+                print(self.user_list_time)
+                file[self.user_name] = self.user_list_time
             else:
-                file['best_time'] = 10000000
-            print(file['best_time'])
-            file.sync()
-            file.close()
+                self.user_list_time = file[self.user_name]
+                self.user_list_time.append(time_s)
+                file[self.user_name] = self.user_list_time
+                file.sync()
+                file.close()

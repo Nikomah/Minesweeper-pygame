@@ -1,5 +1,16 @@
+import os
 
 from game import *
+
+user_name = None
+
+with shelve.open('current_user') as file:
+    for i in file.values():
+        user_name = i
+    file.close()
+os.remove('current_user.bak')
+os.remove('current_user.dat')
+os.remove('current_user.dir')
 
 
 class Menu(pygame.sprite.Sprite):
@@ -20,7 +31,7 @@ def print_text(message, x, y, font_color=(0, 0, 0), font_type='fonts/MangabeyReg
     screen.blit(text, (x, y))
 
 
-def run_main():
+def run_main(name=None):
     easy = Menu()
     easy.draw((128, 255, 0), 0, 144)
 
@@ -43,17 +54,18 @@ def run_main():
                 quit()
             if event.type == pygame.MOUSEBUTTONUP:
                 if easy.rect.collidepoint(event.pos):
-                    easy_game = Game(9, 9, mine_number=10)
+                    easy_game = Game(9, 9, mine_number=10, name=name)
                     easy_game.run_game()
                 if middle.rect.collidepoint(event.pos):
-                    middle_game = Game(16, 16, mine_number=40)
+                    middle_game = Game(16, 16, mine_number=40, name=name)
                     middle_game.run_game()
                 if strong.rect.collidepoint(event.pos):
-                    strong_game = Game(30, 16, mine_number=99)
+                    strong_game = Game(30, 16, mine_number=99, name=name)
                     strong_game.run_game()
         pygame.display.flip()
         pygame.display.update()
     quit()
 
 
-run_main()
+if __name__ == '__main__':
+    run_main(name=user_name)
