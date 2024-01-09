@@ -1,8 +1,8 @@
-import shelve
 from random import choice
 
 import pygame.time
 
+from count_tkinter import *
 from objects import *
 from sounds import *
 
@@ -17,7 +17,6 @@ class Game:
         self.h = h
         self.mine_number = mine_number
         self.user_name = name
-        print(self.user_name)
         self.field_width = self.w * 48
         self.field_height = self.h * 48
         self.field = pygame.display.set_mode((self.field_width, self.field_height + 60))
@@ -128,7 +127,7 @@ class Game:
             }
         empty_list = []
         for i, j in dict_.values():
-            for cell in empty_cell:
+            for cell in empty_cells:
                 if cell.rect.collidepoint(i, j):
                     self.field.blit(empty, cell.rect)
                     empty_list.append(cell.rect.topleft)
@@ -142,7 +141,7 @@ class Game:
                     cell.kill()
         unique_empty_list = list(set(empty_list))
         del empty_list
-        for cell in empty_cell:
+        for cell in empty_cells:
             if cell.rect.collidepoint(x_pos, y_pos) and cell.rect.topleft in unique_empty_list:
                 unique_empty_list.remove(cell.rect.topleft)
                 cell.kill()
@@ -241,7 +240,7 @@ class Game:
                             if digit.rect.collidepoint(x, y):
                                 self.open_digit_cell(x, y, digit)
                                 break
-                        for cell in empty_cell:
+                        for cell in empty_cells:
                             if cell.rect.collidepoint(x, y):
                                 self.open_empty_cell(x, y)
                                 break
@@ -278,7 +277,7 @@ class Game:
         all_cells.empty()
         all_digits.empty()
         all_flags.empty()
-        empty_cell.empty()
+        empty_cells.empty()
         self.y_mine_list.clear()
         self.x_mine_list.clear()
         self.list_of_deleted_mines_topleft.clear()
@@ -316,8 +315,7 @@ class Game:
             self.file_name = 'strong_best_time'
         if self.user_name:
             self.wright_count_best(self.file_name, self.time_s)
-            import count_tkinter
-            count_tkinter.final_widow(self.file_name, self.time_s)
+            final_widow(self.file_name, self.time_s)
         while stopped:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

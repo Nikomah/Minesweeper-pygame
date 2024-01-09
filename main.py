@@ -1,6 +1,7 @@
-import os
-
+import start_tkinter
 from game import *
+
+start_tkinter.stub()
 
 user_name = None
 
@@ -8,9 +9,6 @@ with shelve.open('current_user') as file:
     for i in file.values():
         user_name = i
     file.close()
-os.remove('current_user.bak')
-os.remove('current_user.dat')
-os.remove('current_user.dir')
 
 
 class Menu(pygame.sprite.Sprite):
@@ -64,8 +62,11 @@ def run_main(name=None):
                     strong_game.run_game()
         pygame.display.flip()
         pygame.display.update()
-    quit()
 
+
+os.remove('current_user.bak')
+os.remove('current_user.dat')
+os.remove('current_user.dir')
 
 if __name__ == '__main__':
     run_main(name=user_name)

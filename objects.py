@@ -4,7 +4,7 @@ from images import *
 all_cells = pygame.sprite.Group()
 all_mines = pygame.sprite.Group()
 all_digits = pygame.sprite.Group()
-empty_cell = pygame.sprite.Group()
+empty_cells = pygame.sprite.Group()
 all_flags = pygame.sprite.Group()
 
 
@@ -49,4 +49,4 @@ class EmptyCell(pygame.sprite.Sprite):
         self.image = empty
         self.rect = self.image.get_rect()
         self.image.blit(empty, (0, 0))
-        self.add(empty_cell)
+        self.add(empty_cells)
